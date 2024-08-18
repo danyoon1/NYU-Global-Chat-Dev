@@ -19,6 +19,8 @@ const Login = () => {
     const [pwd, setPwd] = useState('');
     const [errMsg, setErrMsg] = useState('');
 
+    const [isValidSubmission, setIsValidSubmission] = useState(false);
+
     useEffect(() => {
         userRef.current.focus();
     }, []);
@@ -29,6 +31,8 @@ const Login = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        setIsValidSubmission(true);
 
         try {
             const response = await axios.post(LOGIN_URL,
@@ -57,6 +61,7 @@ const Login = () => {
                 setErrMsg('Login Failed');
             }
             errRef.current.focus();
+            setIsValidSubmission(false);
         }
     }
 
@@ -97,7 +102,11 @@ const Login = () => {
                     value={pwd}
                 />
 
-                <button type="submit">Login</button>
+                <button
+                    type="submit"
+                    disabled={isValidSubmission ? true : false}
+                >Login</button>
+                <p className={isValidSubmission ? 'instructions' : 'offscreen'}>Waiting for server response... This may take a while...</p>
                 <div className="persistCheck">
                     <input
                         type="checkbox"
