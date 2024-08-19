@@ -27,6 +27,7 @@ const Chat = () => {
     const [bottom, setBottom] = useState(true);
     const [activityTimer, setActivityTimer] = useState(null);
     const [profileContent, setProfileContent] = useState({});
+    const [isLoadingProfile, setIsLoadingProfile] = useState(true);
 
     const initCon = useRef(false);
     const msgRef = useRef();
@@ -79,6 +80,7 @@ const Chat = () => {
             dialogController.current.abort();
             dialogController.current = new AbortController();
             setProfileContent({});
+            setIsLoadingProfile(true);
 
             dialogRef.current.close();
         } else {
@@ -95,10 +97,12 @@ const Chat = () => {
                     year: yearOptions[response?.data?.year].label,
                     bio: response?.data?.bio
                 });
+                setIsLoadingProfile(false);
             } catch (err) {
                 if (err.code !== 'ERR_CANCELED') {
                     console.error(err);
                 }
+                setIsLoadingProfile(true);
             }
         }
     }
@@ -241,10 +245,15 @@ const Chat = () => {
                 }}>
                 <div className='dialog-box'>
                     <span className='dialog-text'>
-                        <span>Username: {profileContent.user}</span> <br />
-                        <span>School: {profileContent.school}</span> <br />
-                        <span>Year: {profileContent.year}</span> <br /> <br />
-                        <span>{profileContent.bio}</span>
+                        {isLoadingProfile
+                            ? 'Loading...'
+                            : <>
+                                <span>Username: {profileContent.user}</span> <br />
+                                <span>School: {profileContent.school}</span> <br />
+                                <span>Year: {profileContent.year}</span> <br /> <br />
+                                <span>{profileContent.bio}</span>
+                            </>
+                        }
                     </span>
                     <button className='dialog-button' onClick={toggleProfile}>Close</button>
                 </div>
