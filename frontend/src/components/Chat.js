@@ -2,15 +2,21 @@ import { useState, useEffect, useRef } from 'react';
 import { socket } from './Socket';
 import { jwtDecode } from 'jwt-decode';
 import useAuth from '../hooks/useAuth';
+import useAxiosPrivate from '../hooks/useAxiosPrivate';
+import useProfileOptions from '../hooks/useProfileOptions';
 
 const COLOR_CODES = {
     'User': 0,
     'Admin': 1
 }
 
+const USERS_URL = '/users';
+
 const Chat = () => {
 
     const { auth } = useAuth();
+    const axiosPrivate = useAxiosPrivate();
+    const { schoolOptions, yearOptions } = useProfileOptions();
 
     const [connected, setConnected] = useState(false);
     const [msgInput, setMsgInput] = useState('');
@@ -20,10 +26,13 @@ const Chat = () => {
     const [typingUsers, setTypingUsers] = useState([]);
     const [bottom, setBottom] = useState(true);
     const [activityTimer, setActivityTimer] = useState(null);
+    const [profileContent, setProfileContent] = useState({});
 
     const initCon = useRef(false);
     const msgRef = useRef();
     const endRef = useRef(null);
+    const dialogRef = useRef(null);
+    const dialogController = useRef(new AbortController());
 
     useEffect(() => {
 
@@ -59,6 +68,39 @@ const Chat = () => {
     const handleScroll = (e) => {
         const bottom = e.target.scrollHeight - e.target.scrollTop - e.target.clientHeight < 10;
         setBottom(bottom);
+    }
+
+    const toggleProfile = async (user) => {
+        if (!dialogRef.current) {
+            return;
+        }
+
+        if (dialogRef.current.hasAttribute('open')) {
+            dialogController.current.abort();
+            dialogController.current = new AbortController();
+            setProfileContent({});
+
+            dialogRef.current.close();
+        } else {
+            dialogRef.current.showModal();
+
+            try {
+                const response = await axiosPrivate.get(`${USERS_URL}/getProfile/${user}`, {
+                    signal: dialogController.current.signal
+                });
+
+                setProfileContent({
+                    user,
+                    school: schoolOptions[response?.data?.school].label,
+                    year: yearOptions[response?.data?.year].label,
+                    bio: response?.data?.bio
+                });
+            } catch (err) {
+                if (err.code !== 'ERR_CANCELED') {
+                    console.error(err);
+                }
+            }
+        }
     }
 
     const sendActivity = () => {
@@ -117,7 +159,8 @@ const Chat = () => {
                     {msgHistory.map((msg, i) => (
                         <li key={i}>
                             <span
-                                className={`${msg.color === 1 ? 'admin' : 'user'} msg-name`}>
+                                className={`${msg.color === 1 ? 'admin' : 'user'} msg-name`}
+                                onClick={() => toggleProfile(msg.name)}>
                                 {`${msg.name}`}
                             </span>
                             <span className='msg-separator'>:</span>
@@ -189,6 +232,23 @@ const Chat = () => {
                 />
                 <button type='submit' className='chat-submit'>Send</button>
             </form>
+
+            <dialog
+                className="dialog"
+                ref={dialogRef}
+                onClick={(e) => {
+                    if (e.currentTarget === e.target) toggleProfile();
+                }}>
+                <div className='dialog-box'>
+                    <span className='dialog-text'>
+                        <span>Username: {profileContent.user}</span> <br />
+                        <span>School: {profileContent.school}</span> <br />
+                        <span>Year: {profileContent.year}</span> <br /> <br />
+                        <span>{profileContent.bio}</span>
+                    </span>
+                    <button className='dialog-button' onClick={toggleProfile}>Close</button>
+                </div>
+            </dialog>
         </section>
     )
 }

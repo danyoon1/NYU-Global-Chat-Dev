@@ -25,6 +25,20 @@ const userSchema = new Schema({
         type: Boolean,
         default: false
     },
+    profile: {
+        school: {
+            type: Number,
+            default: 0
+        },
+        year: {
+            type: Number,
+            default: 0
+        },
+        biography: {
+            type: String,
+            default: ''
+        }
+    },
     refreshToken: [String]
 });
 

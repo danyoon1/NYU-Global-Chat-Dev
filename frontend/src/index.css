@@ -148,12 +148,13 @@ nav {
 }
 
 .Register,
-.Login {
+.Login,
+.Profile {
     width: 40%;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    overflow-y: auto;
+    /* overflow-y: auto; */
 }
 
 .Register h1,
@@ -174,6 +175,7 @@ nav {
 input[type='text'],
 input[type='password'],
 input[type='email'],
+textarea,
 button {
     font-size: 1.2rem;
     padding: 0.25rem;
@@ -273,10 +275,12 @@ button {
     overflow: hidden;
     white-space: nowrap;
     text-align: right;
+    cursor: pointer;
 }
 
 .msg-separator {
     margin-right: 0.2rem;
+    vertical-align: top;
 }
 
 .msg-text {
@@ -364,7 +368,38 @@ button {
     width: 40%;
 }
 
+.profile-container {
+    display: flex;
+    flex-direction: column;
+    border: 3px solid rgb(0, 255, 51);
+    border-radius: 7px;
+    padding: 1rem;
+}
+
+.profile-container h2 {
+    padding-bottom: 1rem;
+}
+
+.profile-item {
+    padding-bottom: 1rem;
+}
+
+.profile-container textarea {
+    font-size: 1.1rem;
+    resize: none;
+}
+
+#bio-label {
+    vertical-align: top;
+}
+
 @media screen and (max-width: 540px) {
+
+    .Profile,
+    .Register,
+    .Login {
+        width: 90%;
+    }
 
     .nav-list {
         font-size: 0.7rem;
