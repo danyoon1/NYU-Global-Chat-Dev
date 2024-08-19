@@ -28,11 +28,11 @@ const userSchema = new Schema({
     profile: {
         school: {
             type: Number,
-            default: 0
+            default: 7
         },
         year: {
             type: Number,
-            default: 0
+            default: 6
         },
         biography: {
             type: String,
