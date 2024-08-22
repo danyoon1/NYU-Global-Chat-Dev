@@ -1,7 +1,8 @@
 const User = require('../models/User');
 
 const getAllUsers = async (req, res) => {
-    const users = await User.find({}, 'username').exec();
+    // const users = await User.find({}, 'username').exec();
+    const users = await User.find({}, 'username');
     if (!users) {
         return res.status(204).json({ 'message': 'no users found' });
     }
@@ -11,7 +12,8 @@ const getAllUsers = async (req, res) => {
 const setProfile = async (req, res) => {
     const { user, school, year, bio } = req.body;
 
-    const foundUser = await User.findOne({ username: user }).exec();
+    // const foundUser = await User.findOne({ username: user }).exec();
+    const foundUser = await User.findOne({ username: user });
 
     if (!foundUser) {
         return res.sendStatus(401);
@@ -29,7 +31,8 @@ const setProfile = async (req, res) => {
 const getProfile = async (req, res) => {
     const user = req.params.user;
 
-    const foundUser = await User.findOne({ username: user }).exec();
+    // const foundUser = await User.findOne({ username: user }).exec();
+    const foundUser = await User.findOne({ username: user });
 
     if (!foundUser) {
         return res.sendStatus(401);

@@ -11,7 +11,8 @@ const handleLogin = async (req, res) => {
         return res.status(400).json({ 'message': 'Username and password are required' });
     }
     // check and set foundUser
-    const foundUser = await User.findOne({ username: user }).exec();
+    // const foundUser = await User.findOne({ username: user }).exec();
+    const foundUser = await User.findOne({ username: user });
     if (!foundUser) {
         return res.sendStatus(401); // unauthorized
     }
@@ -59,7 +60,8 @@ const handleLogin = async (req, res) => {
 
             // potential token reuse
             const refreshToken = cookies.jwt;
-            const foundToken = await User.findOne({ refreshToken }).exec();
+            // const foundToken = await User.findOne({ refreshToken }).exec();
+            const foundToken = await User.findOne({ refreshToken });
 
             // token reuse detected
             if (!foundToken) {

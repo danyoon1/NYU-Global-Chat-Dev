@@ -15,7 +15,8 @@ const handleRefreshToken = async (req, res) => {
     // clear cookie to create new one
     res.clearCookie('jwt', { httpOnly: true, sameSite: 'None', secure: true, maxAge: 1000 * 60 * 60 * 24 })
 
-    const foundUser = await User.findOne({ refreshToken }).exec();
+    // const foundUser = await User.findOne({ refreshToken }).exec();
+    const foundUser = await User.findOne({ refreshToken });
 
     // refresh token reuse detected
     if (!foundUser) {
@@ -26,7 +27,8 @@ const handleRefreshToken = async (req, res) => {
                 if (err) { // expired token
                     return res.sendStatus(403); // forbidden
                 }
-                let hackedUser = await User.findOne({ username: decoded.username }).exec();
+                // let hackedUser = await User.findOne({ username: decoded.username }).exec();
+                let hackedUser = await User.findOne({ username: decoded.username });
                 hackedUser.refreshToken = [];
                 const result = await hackedUser.save();
             }

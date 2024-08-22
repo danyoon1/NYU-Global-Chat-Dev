@@ -2,7 +2,8 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 
 const handleVerification = async (req, res) => {
-    const foundUser = await User.findOne({ username: req.body.username }).exec();
+    // const foundUser = await User.findOne({ username: req.body.username }).exec();
+    const foundUser = await User.findOne({ username: req.body.username });
 
     jwt.verify(
         req.body.emailToken,

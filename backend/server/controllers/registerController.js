@@ -15,8 +15,10 @@ const handleNewUser = async (req, res) => {
     }
 
     // check for duplicate usernames and email in the db
-    const duplicateUser = await User.findOne({ username: user }).exec();
-    const duplicateEmail = await User.findOne({ email: stuEmail }).exec();
+    // const duplicateUser = await User.findOne({ username: user }).exec();
+    // const duplicateEmail = await User.findOne({ email: stuEmail }).exec();
+    const duplicateUser = await User.findOne({ username: user });
+    const duplicateEmail = await User.findOne({ email: stuEmail });
     if (duplicateUser || duplicateEmail) {
         return res.sendStatus(409); // conflict
     }
